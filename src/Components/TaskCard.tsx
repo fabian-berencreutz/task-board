@@ -8,6 +8,7 @@ type TaskCardProps = {
 };
 
 const TaskCard = ({
+  id,
   title,
   description,
   assignee,
@@ -16,6 +17,7 @@ const TaskCard = ({
 }: TaskCardProps) => {
   return (
     <article className="task-card">
+      <p>ID: {id}</p>
       <h3>{title}</h3>
       <p>{description}</p>
       <p>Assignee: {assignee}</p>
