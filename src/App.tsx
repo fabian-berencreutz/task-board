@@ -92,6 +92,7 @@ const initialTasks: Task[] = [
 
 const App = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleAddTask = (newTask: NewTask) => {
     const createdTask: Task = {
@@ -102,9 +103,22 @@ const App = () => {
     setTasks((prevTasks) => [createdTask, ...prevTasks]);
   };
 
-  const todoTasks = tasks.filter((task) => task.status === "todo");
-  const doingTasks = tasks.filter((task) => task.status === "doing");
-  const doneTasks = tasks.filter((task) => task.status === "done");
+  const filteredTasks = tasks.filter((task) => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+
+    return (
+      task.title.toLowerCase().includes(query) ||
+      task.description.toLowerCase().includes(query) ||
+      task.category.toLowerCase().includes(query) ||
+      task.assignee.toLowerCase().includes(query) ||
+      task.priority.toLowerCase().includes(query)
+    );
+  });
+
+  const todoTasks = filteredTasks.filter((task) => task.status === "todo");
+  const doingTasks = filteredTasks.filter((task) => task.status === "doing");
+  const doneTasks = filteredTasks.filter((task) => task.status === "done");
 
   return (
     <div className="min-h-screen bg-sky-50 text-slate-800 p-4 md:p-8">
@@ -112,6 +126,21 @@ const App = () => {
         <Header />
         <main className="space-y-8">
           <NewTaskForm onAddTask={handleAddTask} />
+
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <label htmlFor="search" className="block text-sm font-medium text-slate-700 mb-1">
+              Search Tasks
+            </label>
+            <input
+              id="search"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by title, description, category, assignee, or priority..."
+              className="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Column title="Todo">
               {todoTasks.map((task) => (
