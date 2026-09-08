@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Column from "./Components/Column";
@@ -6,101 +6,38 @@ import TaskCard from "./Components/TaskCard";
 import type { Task, NewTask } from "./types/Task";
 import NewTaskForm from "./Components/NewTaskForm";
 
-const initialTasks: Task[] = [
-  {
-    id: 1,
-    title: "Designa Startsidan",
-    description: "Skapa wireframes och färgschema för applikationen.",
-    category: "Design",
-    priority: "high",
-    assignee: "Anna Svensson",
-    status: "todo",
-  },
-  {
-    id: 2,
-    title: "Skapa Databas-schema",
-    description: "Definiera modeller och relationer i PostgreSQL.",
-    category: "Backend",
-    priority: "high",
-    assignee: "David Nilsson",
-    status: "todo",
-  },
-  {
-    id: 3,
-    title: "Planera Sprint",
-    description: "Sätta upp användarberättelser och estimera tid.",
-    category: "Projektledning",
-    priority: "low",
-    assignee: "Sara Ek",
-    status: "todo",
-  },
-  {
-    id: 4,
-    title: "Implementera Auth",
-    description: "Skapa inloggning och registrering med JWT.",
-    category: "Utveckling",
-    priority: "medium",
-    assignee: "Erik Johansson",
-    status: "doing",
-  },
-  {
-    id: 5,
-    title: "Bygga API-endpoints",
-    description: "Skapa REST API för tasks och kolumner.",
-    category: "Backend",
-    priority: "high",
-    assignee: "Johan Berg",
-    status: "doing",
-  },
-  {
-    id: 6,
-    title: "Styling med CSS",
-    description: "Applicera designsystem och responsiv layout.",
-    category: "Frontend",
-    priority: "medium",
-    assignee: "Anna Svensson",
-    status: "doing",
-  },
-  {
-    id: 7,
-    title: "Skriva Enhetstester",
-    description: "Skriva tester för TaskCard- och Header-komponenterna.",
-    category: "Testning",
-    priority: "low",
-    assignee: "Maria Lind",
-    status: "done",
-  },
-  {
-    id: 8,
-    title: "Sätta upp CI/CD pipeline",
-    description: "Konfigurera GitHub Actions för automatiska tester.",
-    category: "DevOps",
-    priority: "medium",
-    assignee: "David Nilsson",
-    status: "done",
-  },
-  {
-    id: 9,
-    title: "Kravanalys",
-    description: "Samla in funktionella krav från intressenter.",
-    category: "Analys",
-    priority: "low",
-    assignee: "Sara Ek",
-    status: "done",
-  },
-];
+const API_URL = "http://localhost:3000/api/tasks";
 
 const App = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleAddTask = (newTask: NewTask) => {
-    const createdTask: Task = {
-      ...newTask,
-      id: Date.now(),
-      status: "todo",
-    };
-    setTasks((prevTasks) => [createdTask, ...prevTasks]);
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error("Error fetching tasks from backend:", err));
+  }, []);
+
+  const handleAddTask = async (newTask: NewTask) => {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      if (response.ok) {
+        const savedTask: Task = await response.json();
+        setTasks((prevTasks) => [savedTask, ...prevTasks]);
+      } else {
+        console.error("Failed to save task to backend");
+      }
+    } catch (error) {
+      console.error("Error saving task:", error);
+    }
   };
 
   const filteredTasks = tasks.filter((task) => {
