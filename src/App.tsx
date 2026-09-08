@@ -1,11 +1,12 @@
+import { useState } from "react";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Column from "./Components/Column";
 import TaskCard from "./Components/TaskCard";
-import type { Task } from "./types/Task";
+import type { Task, NewTask } from "./types/Task";
 import NewTaskForm from "./Components/NewTaskForm";
 
-const tasks: Task[] = [
+const initialTasks: Task[] = [
   {
     id: 1,
     title: "Designa Startsidan",
@@ -90,60 +91,73 @@ const tasks: Task[] = [
 ];
 
 const App = () => {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+  const handleAddTask = (newTask: NewTask) => {
+    const createdTask: Task = {
+      ...newTask,
+      id: Date.now(),
+      status: "todo",
+    };
+    setTasks((prevTasks) => [createdTask, ...prevTasks]);
+  };
+
   const todoTasks = tasks.filter((task) => task.status === "todo");
   const doingTasks = tasks.filter((task) => task.status === "doing");
   const doneTasks = tasks.filter((task) => task.status === "done");
 
   return (
-    <div>
-      <Header />
-      <main>
-        <NewTaskForm />
-        <div className="board">
-          <Column title="Todo">
-            {todoTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                category={task.category}
-                priority={task.priority}
-                assignee={task.assignee}
-              />
-            ))}
-          </Column>
+    <div className="min-h-screen bg-sky-50 text-slate-800 p-4 md:p-8">
+      <div className="max-w-7xl w-full mx-auto space-y-8">
+        <Header />
+        <main className="space-y-8">
+          <NewTaskForm onAddTask={handleAddTask} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Column title="Todo">
+              {todoTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  description={task.description}
+                  category={task.category}
+                  priority={task.priority}
+                  assignee={task.assignee}
+                />
+              ))}
+            </Column>
 
-          <Column title="Doing">
-            {doingTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                category={task.category}
-                priority={task.priority}
-                assignee={task.assignee}
-              />
-            ))}
-          </Column>
+            <Column title="Doing">
+              {doingTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  description={task.description}
+                  category={task.category}
+                  priority={task.priority}
+                  assignee={task.assignee}
+                />
+              ))}
+            </Column>
 
-          <Column title="Done">
-            {doneTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                category={task.category}
-                priority={task.priority}
-                assignee={task.assignee}
-              />
-            ))}
-          </Column>
-        </div>
-      </main>
-      <Footer />
+            <Column title="Done">
+              {doneTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  description={task.description}
+                  category={task.category}
+                  priority={task.priority}
+                  assignee={task.assignee}
+                />
+              ))}
+            </Column>
+          </div>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
