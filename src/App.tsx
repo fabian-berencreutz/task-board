@@ -3,6 +3,7 @@ import Footer from "./Components/Footer";
 import Column from "./Components/Column";
 import TaskCard from "./Components/TaskCard";
 import type { Task } from "./types/Task";
+import NewTaskForm from "./Components/NewTaskForm";
 
 const tasks: Task[] = [
   {
@@ -97,6 +98,7 @@ const App = () => {
     <div>
       <Header />
       <main>
+        <NewTaskForm />
         <div className="board">
           <Column title="Todo">
             {todoTasks.map((task) => (
