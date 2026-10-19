@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { NewTask, TaskPriority } from "../types/Task";
 
 type NewTaskFormProps = {
@@ -6,6 +7,7 @@ type NewTaskFormProps = {
 };
 
 const NewTaskForm = ({ onAddTask }: NewTaskFormProps) => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assignee, setAssignee] = useState("");
@@ -32,6 +34,7 @@ const NewTaskForm = ({ onAddTask }: NewTaskFormProps) => {
     setAssignee("");
     setCategory("");
     setPriority("low");
+    navigate("/");
   };
 
   const inputStyle =

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Column from "./Components/Column";
@@ -62,65 +63,76 @@ const App = () => {
       <div className="max-w-7xl w-full mx-auto space-y-8">
         <Header />
         <main className="space-y-8">
-          <NewTaskForm onAddTask={handleAddTask} />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <label htmlFor="search" className="block text-sm font-medium text-slate-700 mb-1">
+                      Search Tasks
+                    </label>
+                    <input
+                      id="search"
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by title, description, category, assignee, or priority..."
+                      className="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    />
+                  </div>
 
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <label htmlFor="search" className="block text-sm font-medium text-slate-700 mb-1">
-              Search Tasks
-            </label>
-            <input
-              id="search"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by title, description, category, assignee, or priority..."
-              className="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Column title="Todo">
+                      {todoTasks.map((task) => (
+                        <TaskCard
+                          key={task.id}
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          category={task.category}
+                          priority={task.priority}
+                          assignee={task.assignee}
+                        />
+                      ))}
+                    </Column>
+
+                    <Column title="Doing">
+                      {doingTasks.map((task) => (
+                        <TaskCard
+                          key={task.id}
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          category={task.category}
+                          priority={task.priority}
+                          assignee={task.assignee}
+                        />
+                      ))}
+                    </Column>
+
+                    <Column title="Done">
+                      {doneTasks.map((task) => (
+                        <TaskCard
+                          key={task.id}
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          category={task.category}
+                          priority={task.priority}
+                          assignee={task.assignee}
+                        />
+                      ))}
+                    </Column>
+                  </div>
+                </>
+              }
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Column title="Todo">
-              {todoTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  category={task.category}
-                  priority={task.priority}
-                  assignee={task.assignee}
-                />
-              ))}
-            </Column>
-
-            <Column title="Doing">
-              {doingTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  category={task.category}
-                  priority={task.priority}
-                  assignee={task.assignee}
-                />
-              ))}
-            </Column>
-
-            <Column title="Done">
-              {doneTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  category={task.category}
-                  priority={task.priority}
-                  assignee={task.assignee}
-                />
-              ))}
-            </Column>
-          </div>
+            <Route
+              path="/new-task"
+              element={<NewTaskForm onAddTask={handleAddTask} />}
+            />
+          </Routes>
         </main>
         <Footer />
       </div>
